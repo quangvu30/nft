@@ -31,7 +31,7 @@ class App extends Component {
     const networkId = await web3.eth.net.getId();
 
     //const networkData = Color.networks[networkId];
-    if (networkId == 4) {
+    if (networkId === 4) {
       const abi = Color;
       const address = "0xF39E7414d1AEdeC855F672d84f189d949350091F";
       const contract = new web3.eth.Contract(abi, address);
