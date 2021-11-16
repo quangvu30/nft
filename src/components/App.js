@@ -23,32 +23,36 @@ class App extends Component {
   }
 
   async loadBlockchainData() {
-    const web3 = window.web3;
-    // Load account
-    const accounts = await web3.eth.getAccounts();
-    this.setState({ account: accounts[0] });
+    try {
+      const web3 = window.web3;
+      // Load account
+      const accounts = await web3.eth.getAccounts();
+      this.setState({ account: accounts[0] });
 
-    const networkId = await web3.eth.net.getId();
+      const networkId = await web3.eth.net.getId();
 
-    //const networkData = Color.networks[networkId];
-    if (networkId === 4) {
-      const abi = Color;
-      const address = "0xF39E7414d1AEdeC855F672d84f189d949350091F";
-      const contract = new web3.eth.Contract(abi, address);
+      //const networkData = Color.networks[networkId];
+      if (networkId === 4) {
+        const abi = Color;
+        const address = "0xF39E7414d1AEdeC855F672d84f189d949350091F";
+        const contract = new web3.eth.Contract(abi, address);
 
-      const totalSupply = await contract.methods.totalSupply().call();
-      const price = await contract.methods.price().call();
-      this.setState({ contract, price, address });
-      this.setState({ totalSupply });
-      // Load Colors
-      for (var i = 1; i <= totalSupply; i++) {
-        const color = await contract.methods.getHexColor(i - 1).call();
-        this.setState({
-          colors: [...this.state.colors, color],
-        });
+        const totalSupply = await contract.methods.totalSupply().call();
+        const price = await contract.methods.price().call();
+        this.setState({ contract, price, address });
+        this.setState({ totalSupply });
+        // Load Colors
+        for (var i = 1; i <= totalSupply; i++) {
+          const color = await contract.methods.getHexColor(i - 1).call();
+          this.setState({
+            colors: [...this.state.colors, color],
+          });
+        }
+      } else {
+        window.alert("Smart contract not deployed to detected network.");
       }
-    } else {
-      window.alert("Smart contract not deployed to detected network.");
+    } catch (error) {
+      console.error(error);
     }
   }
 
